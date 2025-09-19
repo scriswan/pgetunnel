@@ -325,8 +325,8 @@ else
     awk -v b="$1" 'BEGIN{
       kib=1024; mib=kib*kib; gib=mib*kib;
       if(b>=gib) printf "%.2f GiB", b/gib;
-      else if(b>=mib) printf "%.2f MiB", b/mib;
-      else if(b>=kib) printf "%.2f KiB", b/kib;
+      else if(b>=mib) printf "%.2f GiB", b/mib;
+      else if(b>=kib) printf "%.2f GiB", b/kib;
       else printf "%d B", b;
     }'
   }
@@ -398,8 +398,8 @@ echo -e "${BICyan} │  IP VPS    :  ${BIWhite}$IPVPS${NC}"
 echo -e "${BICyan} │  ISP       :  ${BIWhite}$ISP${NC}"
 echo -e "${BICyan} │  KOTA      :  ${BIWhite}$CITY, $COUNTRY${NC}"
 echo -e "${BICyan} │  REBOOT    :  ${BIWhite}02:00 ( Jam 2 malam )${NC}"
-echo -e "${BICyan} │  TRAFIK    :  ${BIWhite}Today: $today  Yesterday: $yesterday${NC}"
-echo -e "${BICyan} │            :  ${BIWhite}Month: $month  Total: $total${NC}"
+echo -e "${BICyan} │  ${BIWhite}Today : $today  Yesterday : $yesterday${NC}"
+echo -e "${BICyan} │  ${BIWhite}Month : $month  Total : $total${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
 echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN $NC"
