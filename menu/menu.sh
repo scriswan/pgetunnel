@@ -39,7 +39,7 @@ BURIQ () {
 MYIP=$(curl -sS ipv4.icanhazip.com)
 
 # Mendapatkan nama berdasarkan IP yang sesuai di file register
-Name=$(curl -sS https://raw.githubusercontent.com/scpremium1/jesstunnel/main/register | grep $MYIP | awk '{print $2}')
+Name=$(curl -sS https://raw.githubusercontent.com/scriswan/pgetunnel/main/register | grep $MYIP | awk '{print $2}')
 
 # Menyimpan nama ke file .ini untuk pemeriksaan izin
 echo $Name > /usr/local/etc/.$Name.ini
