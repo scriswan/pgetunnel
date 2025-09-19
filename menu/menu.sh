@@ -377,7 +377,7 @@ else
     yesterday=$(human "$yesterday_bytes")
     month=$(human "$month_bytes")
     total=$(human "$total_bytes")
-  else
+  
     today="N/A"; yesterday="N/A"; month="N/A"; total="N/A"
   fi
 fi
