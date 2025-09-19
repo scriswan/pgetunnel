@@ -298,161 +298,50 @@ ISP=$(curl -s https://ipinfo.io/$IPVPS/org | cut -d' ' -f2-)
 CITY=$(curl -s https://ipinfo.io/$IPVPS/city)
 COUNTRY=$(curl -s https://ipinfo.io/$IPVPS/country)
 
-#!/bin/bash
-# ==================== TRAFFIC INFO =====================
-
-# Pilih interface utama
-iface=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1);exit}}')
-[ -z "$iface" ] && iface="eth0"
-
-# Fungsi ubah bytes ke format human readable
-human() {
-  awk -v b="$1" 'BEGIN{
-    kib=1024; mib=kib*kib; gib=mib*kib;
-    if(b>=gib) printf "%.2f GiB", b/gib;
-    else if(b>=mib) printf "%.2f MiB", b/mib;
-    else if(b>=kib) printf "%.2f KiB", b/kib;
-    else printf "%d B", b;
-  }'
-}
-
-if command -v vnstat >/dev/null 2>&1; then
-  today=$(vnstat -i "$iface" | awk '/today/ {print $2" "$3}')
-  yesterday=$(vnstat -i "$iface" | awk '/yesterday/ {print $2" "$3}')
-  month=$(vnstat -i "$iface" | grep "$(date +%b)" | head -n1 | awk '{print $2" "$3}')
-  total=$(vnstat -i "$iface" | awk '/total/ {print $2" "$3}')
-else
-  # --- fallback snapshot ---
-  TRAFFIC_DIR="/var/log/pgetunnel/traffic"
-  mkdir -p "$TRAFFIC_DIR"
-
-  rx_file="/sys/class/net/$iface/statistics/rx_bytes"
-  tx_file="/sys/class/net/$iface/statistics/tx_bytes"
-
-  cur=$(( $(cat "$rx_file") + $(cat "$tx_file") ))
-
-  today_file="$TRAFFIC_DIR/$(date +%F).snap"
-  start_file="$TRAFFIC_DIR/$(date +%F).start"
-
-  [ ! -f "$start_file" ] && echo "$cur" > "$start_file"
-  echo "$cur" > "$today_file"
-
-  start_cur=$(cat "$start_file")
-  today_bytes=$((cur - start_cur))
-  [ "$today_bytes" -lt 0 ] && today_bytes=$cur
-
-  # yesterday
-  yfile_start="$TRAFFIC_DIR/$(date -d "yesterday" +%F).start"
-  yfile_end="$TRAFFIC_DIR/$(date -d "yesterday" +%F).snap"
-  if [ -f "$yfile_start" ] && [ -f "$yfile_end" ]; then
-    ystart=$(cat "$yfile_start")
-    yend=$(cat "$yfile_end")
-    yesterday_bytes=$((yend - ystart))
-    [ "$yesterday_bytes" -lt 0 ] && yesterday_bytes=$yend
-  else
-    yesterday_bytes=0
-  fi
-
-  # month
-  month_bytes=0
-  for f in "$TRAFFIC_DIR"/$(date +%Y-%m)-*.start; do
-    [ ! -f "$f" ] && continue
-    day=$(basename "$f" .start)
-    s=$(cat "$f")
-    efile="$TRAFFIC_DIR/$day.snap"
-    if [ -f "$efile" ]; then
-      e=$(cat "$efile")
-      delta=$((e - s))
-      [ "$delta" -lt 0 ] && delta=$e
-      month_bytes=$((month_bytes + delta))
-    fi
-  done
-
-  # total (lifetime)
-  lifetime_file="$TRAFFIC_DIR/total.bytes"
-  [ ! -f "$lifetime_file" ] && echo "$cur" > "$lifetime_file"
-  prev_total=$(cat "$lifetime_file")
-  echo "$cur" > "$lifetime_file"
-  total_bytes=$((prev_total + today_bytes))
-
-  today=$(human "$today_bytes")
-  yesterday=$(human "$yesterday_bytes")
-  month=$(human "$month_bytes")
-  total=$(human "$total_bytes")
-fi
-# =======================================================
-
-# Warna
-NC='\e[0m'
-BICyan='\e[96;1m'
-BIYellow='\e[93;1m'
-BIGold='\e[38;5;220;1m'
-BIWhite='\e[97;1m'
-Blue='\e[94;1m'
-
-# Dummy variabel (isi sesuai kebutuhanmu)
-totalram=$(free -m | awk '/Mem:/ {print $2}')
-cpu_usage=$(top -bn1 | awk '/Cpu/ {print 100 - $8"%"}')
-DOMAIN="example.com"
-IPVPS=$(curl -s ipv4.icanhazip.com)
-ISP=$(curl -s ipinfo.io/org | sed 's/"/ /g')
-CITY=$(curl -s ipinfo.io/city)
-COUNTRY=$(curl -s ipinfo.io/country)
-
-# Tampilan Info VPS
+# Tampilkan blok informasi VPS
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
 echo -e "${BICyan} │           ${BIGold}WELCOME TO SCRIPT PGETUNNEL STORE${NC}"
-echo -e "${BICyan} │${NC}"
-echo -e "${BICyan} │  OS        : ${BIWhite}$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '\"') ( $(uname -m) )${NC}"
-echo -e "${BICyan} │  RAM & CPU : ${BIWhite}$totalram MB : $cpu_usage${NC}"
-echo -e "${BICyan} │  DOMAIN    : ${BIWhite}$DOMAIN${NC}"
-echo -e "${BICyan} │  IP VPS    : ${BIWhite}$IPVPS${NC}"
-echo -e "${BICyan} │  ISP       : ${BIWhite}$ISP${NC}"
-echo -e "${BICyan} │  KOTA      : ${BIWhite}$CITY, $COUNTRY${NC}"
-echo -e "${BICyan} │  REBOOT    : ${BIWhite}02:00 ( Jam 2 Malam )${NC}"
-echo -e "${BICyan} │  Today:${BIWhite} $today ${NC}Yesterday:${BIWhite} $yesterday${NC}"
-echo -e "${BICyan} │  Month:${BIWhite} $month ${NC}Total:${BIWhite} $total${NC}"
+echo -e "${BICyan} │"
+echo -e "${BICyan} │  OS        :  ${BIWhite}$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '\"') ( $(uname -m) )${NC}"
+echo -e "${BICyan} │  RAM & CPU :  ${BIWhite}$totalram MB : $cpu_usage%${NC}"
+echo -e "${BICyan} │  DOMAIN    :  ${BIWhite}$DOMAIN${NC}"
+echo -e "${BICyan} │  IP VPS    :  ${BIWhite}$IPVPS${NC}"
+echo -e "${BICyan} │  ISP       :  ${BIWhite}$ISP${NC}"
+echo -e "${BICyan} │  KOTA      :  ${BIWhite}$CITY, $COUNTRY${NC}"
+echo -e "${BICyan} │  REBOOT    :  ${BIWhite}02:00 ( Jam 2 malam )${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
-
-# Jumlah Akun
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN${NC}"
-echo -e "${BICyan} │  ${BIWhite}$ssh1           $vma             $vla             $tra${NC}"
+echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN $NC"
+echo -e "${BICyan} │  ${Blue} $ssh1            $vma               $vla               $tra $NC"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
-
-# Status Service
-echo -e "   ${BICyan}SSH ${NC}: $ressh   ${BICyan}NGINX ${NC}: $resngx   ${BICyan}XRAY ${NC}: $resv2r   ${BICyan}TROJAN ${NC}: $resv2r"
-echo -e "   ${BICyan}STUNNEL ${NC}: $resst   ${BICyan}DROPBEAR ${NC}: $resdbr   ${BICyan}SSH-WS ${NC}: $ressshws"
-
-# Menu
+echo -e "     ${BICyan} SSH ${NC}: $ressh"" ${BICyan} NGINX ${NC}: $resngx"" ${BICyan}  XRAY ${NC}: $resv2r"" ${BICyan} TROJAN ${NC}: $resv2r"
+echo -e "   ${BICyan}     STUNNEL ${NC}: $resst" "${BICyan} DROPBEAR ${NC}: $resdbr" "${BICyan} SSH-WS ${NC}: $ressshws"
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │  [${BIWhite}01${BICyan}] SSH        [${BIYellow}Menu${BICyan}]    [${BIWhite}08${BICyan}] ADD-HOST      [${BIYellow}Menu${BICyan}]${NC}"
-echo -e "${BICyan} │  [${BIWhite}02${BICyan}] VMESS      [${BIYellow}Menu${BICyan}]    [${BIWhite}09${BICyan}] RUNNING       [${BIYellow}Menu${BICyan}]${NC}"
-echo -e "${BICyan} │  [${BIWhite}03${BICyan}] VLESS      [${BIYellow}Menu${BICyan}]    [${BIWhite}10${BICyan}] INSTALL UDP   [${BIYellow}Menu${BICyan}]${NC}"
-echo -e "${BICyan} │  [${BIWhite}04${BICyan}] TROJAN     [${BIYellow}Menu${BICyan}]    [${BIWhite}11${BICyan}] INSTALL BOT   [${BIYellow}Menu${BICyan}]${NC}"
-echo -e "${BICyan} │  [${BIWhite}05${BICyan}] SETTING    [${BIYellow}Menu${BICyan}]    [${BIWhite}12${BICyan}] BANDWIDTH     [${BIYellow}Menu${BICyan}]${NC}"
-echo -e "${BICyan} │  [${BIWhite}06${BICyan}] TRIAL      [${BIYellow}Menu${BICyan}]    [${BIWhite}13${BICyan}] MENU THEME    [${BIYellow}Menu${BICyan}]${NC}"
-echo -e "${BICyan} │  [${BIWhite}07${BICyan}] BACKUP     [${BIYellow}Menu${BICyan}]    [${BIWhite}14${BICyan}] UPDATE SCRIPT [${BIYellow}Menu${BICyan}]${NC}"
+echo -e "${BICyan} │  ${BICyan}[${BIWhite}01${BICyan}] SSH     ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}08${BICyan}] ADD-HOST        ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
+echo -e "${BICyan} │  ${BICyan}[${BIWhite}02${BICyan}] VMESS   ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}09${BICyan}] RUNNING         ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
+echo -e "${BICyan} │  ${BICyan}[${BIWhite}03${BICyan}] VLESS   ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}10${BICyan}] INSTALL UDP     ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
+echo -e "${BICyan} │  ${BICyan}[${BIWhite}04${BICyan}] TROJAN  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}11${BICyan}] INSTALL BOT     ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
+echo -e "${BICyan} │  ${BICyan}[${BIWhite}05${BICyan}] SETING  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}12${BICyan}] BANDWITH        ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
+echo -e "${BICyan} │  ${BICyan}[${BIWhite}06${BICyan}] TRIALL  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}13${BICyan}] MENU THEME      ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
+echo -e "${BICyan} │  ${BICyan}[${BIWhite}07${BICyan}] BACKUP  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}14${BICyan}] UPDATE SCRIPT   ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
-
-# Informasi Lisensi
 DATE=$(date +'%d %B %Y')
 datediff() {
-    d1=$(date -d "$1" +%s)
-    d2=$(date -d "$2" +%s)
-    echo -e "${BICyan} │${NC} License Script : ${BIWhite}$(cat /usr/bin/e) $(( (d1 - d2) / 86400 )) Days${NC}"
+d1=$(date -d "$1" +%s)
+d2=$(date -d "$2" +%s)
+echo -e "${BICyan}    │$NC ${BICyan}License Scriptt : $(cat /usr/bin/e) $(( (d1 - d2) / 86400 )) Days $NC"
 }
 mai="datediff "$Exp" "$DATE""
-
-echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │${NC} Version Script : ${BIWhite}$(cat /opt/.ver)${NC}   Last Update"
-echo -e "${BICyan} │${NC} Username       : ${BIWhite}$Name${NC}"
-if [ $exp -lt 1000 ]; then
-    echo -e "${BICyan} │${NC} License Script : ${BIWhite}$sisa_hari${NC} Days Tersisa"
+echo -e "${BICyan}    ┌───────────────────────────────────────────────┐${NC}"
+echo -e "${BICyan}    │$NC ${BICyan}Version Script  : $(cat /opt/.ver) Last Update ${NC}"
+echo -e "${BICyan}    │$NC ${BICyan}Username        :\033[1;36m $Name \e[0m"
+if [ $exp \< 1000 ];
+then
+echo -e "${BICyan}    │$NC ${BICyan}License Script : ${BICyan}$sisa_hari$NC Days Tersisa $NC"
 else
-    datediff "$Exp" "$DATE"
-fi
-echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
+datediff "$Exp" "$DATE"
+fi;
+echo -e "${BICyan}    └───────────────────────────────────────────────┘${NC}"
 
 echo -e ""
 read -p "               Pilih Nomor └╼>>>  bro: " opt
