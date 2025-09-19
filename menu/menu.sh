@@ -308,17 +308,25 @@ Blue="\e[1;94m"          # Bright Blue + Bold
 
 # ================= INFO VPS =================
 
-# ambil interface utama
+# ================= INFO VPS =================
+
+# tentukan interface utama
 iface=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1);exit}}')
 [ -z "$iface" ] && iface="eth0"
 
-# cek vnstat tersedia
+# Cek apakah vnstat tersedia
 if command -v vnstat >/dev/null 2>&1; then
-    total_bw=$(vnstat -i $iface --oneline | awk -F\; '{print $11 "B"}')
+    # Ambil total RX+TX bulan ini dalam GB
+    total_used=$(vnstat -i $iface --oneline | awk -F\; '{print $8+$9}')
+    total_used=$(printf "%.2f" $total_used)
+    # Ambil kuota server dari vnstat (bisa dianggap total traffic bulan ini)
+    total_bandwidth=$(vnstat -i $iface --oneline | awk -F\; '{print $8+$9}')
 else
+    # fallback ke statistik interface langsung
     rx=$(cat /sys/class/net/$iface/statistics/rx_bytes)
     tx=$(cat /sys/class/net/$iface/statistics/tx_bytes)
-    total_bw=$(echo "scale=2; ($rx+$tx)/1073741824" | bc)" GB"
+    total_used=$(echo "scale=2; ($rx+$tx)/1073741824" | bc)
+    total_bandwidth=$total_used
 fi
 
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
@@ -331,7 +339,7 @@ echo -e "${BICyan} │  IP VPS    :  ${BIWhite}$IPVPS${NC}"
 echo -e "${BICyan} │  ISP       :  ${BIWhite}$ISP${NC}"
 echo -e "${BICyan} │  KOTA      :  ${BIWhite}$CITY, $COUNTRY${NC}"
 echo -e "${BICyan} │  REBOOT    :  ${BIWhite}02:00 ( Jam 2 malam )${NC}"
-echo -e "${BICyan} │  BANDWIDTH :  ${BIWhite}$total_bw (total pemakaian)${NC}"
+echo -e "${BICyan} │  BANDWIDTH :  ${BIWhite}$total_used GB (Total Traffic Bulan Ini)${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
 echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN ${NC}"
