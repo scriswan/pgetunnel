@@ -273,7 +273,7 @@ d2=$(date -d "$2" +%s)
 uptime_info=$(uptime -p | sed 's/up //')
 }
 mai="datediff "$Exp" "$DATE""
-export sem=$( curl -s https://raw.githubusercontent.com/scpremium1/jesstunnel/main/version)
+export sem=$( curl -s https://raw.githubusercontent.com/scriswan/pgetunnel/main/version)
 export pak=$( cat /home/.ver)
 IPVPS=$(curl -s ipinfo.io/ip )
 clear
@@ -300,7 +300,7 @@ COUNTRY=$(curl -s https://ipinfo.io/$IPVPS/country)
 
 # Tampilkan blok informasi VPS
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │           ${BIGold}WELCOME TO SCRIPT PGETUNNEL STORE${NC}"
+echo -e "${BICyan} │           ${BICyan}WELCOME TO SCRIPT PGETUNNEL STORE${NC}"
 echo -e "${BICyan} │"
 echo -e "${BICyan} │  OS        :  ${BIWhite}$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '\"') ( $(uname -m) )${NC}"
 echo -e "${BICyan} │  RAM & CPU :  ${BIWhite}$totalram MB : $cpu_usage%${NC}"
