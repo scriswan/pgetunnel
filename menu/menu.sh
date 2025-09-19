@@ -307,6 +307,9 @@ BIYellow="\e[1;93m"      # Bright Yellow + Bold
 Blue="\e[1;94m"          # Bright Blue + Bold
  
 # ----------------- TOTAL BANDWIDTH TERSISA -----------------
+# Set kuota bandwidth bulanan (GB) — ubah sesuai kebutuhan
+BANDWIDTH_LIMIT_GB=500
+
 # tentukan interface (sama cara Anda dapatkan iface sebelumnya)
 iface=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1);exit}}')
 [ -z "$iface" ] && iface="eth0"
