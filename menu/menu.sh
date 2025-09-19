@@ -305,6 +305,98 @@ BIWhite="\e[1;97m"       # Bright White + Bold
 BIGold="\e[1;93m"        # Bright Yellow/Gold + Bold
 BIYellow="\e[1;93m"      # Bright Yellow + Bold
 Blue="\e[1;94m"          # Bright Blue + Bold
+ 
+# ----------------- TOTAL BANDWIDTH TERSISA -----------------
+# Set kuota bandwidth bulanan (GB) — ubah sesuai kebutuhan
+BANDWIDTH_LIMIT_GB=500
+
+# tentukan interface (sama cara Anda dapatkan iface sebelumnya)
+iface=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1);exit}}')
+[ -z "$iface" ] && iface="eth0"
+
+# helper: konversi human-readable (nilai + unit) ke GB (float)
+hr_to_gb() {
+  # arg1 = nilai (angka), arg2 = unit (KiB, MiB, GiB, TiB, kB, MB, GB)
+  val=$1; unit=$2
+  case "$unit" in
+    *KiB|KiB) echo "scale=6; $val/1048576" | bc ;;   # 1024^2
+    *MiB|MiB) echo "scale=6; $val/1024" | bc ;;
+    *GiB|GiB) echo "scale=6; $val" | bc ;;
+    *TiB|TiB) echo "scale=6; $val*1024" | bc ;;
+    *kB|kB)  echo "scale=6; $val/1000000" | bc ;;    # decimal fallback
+    *MB|MB)  echo "scale=6; $val/1000" | bc ;;
+    *GB|GB)  echo "scale=6; $val" | bc ;;
+    *)       echo "0" ;; 
+  esac
+}
+
+# Coba vnstat (lebih akurat untuk per bulan)
+used_gb="0"
+if command -v vnstat >/dev/null 2>&1; then
+  month_label="$(date +"%b '%y")"   # contoh: Sep '25
+  # Ambil baris bulan ini dari vnstat -m
+  line=$(vnstat -m -i "$iface" 2>/dev/null | grep -m1 "$month_label")
+  if [ -n "$line" ]; then
+    # line biasanya: "Sep '25   12.34 GiB  1.23 GiB  13.57 GiB"
+    # ambil dua kolom terakhir -> nilai dan satuan (mis. 13.57 GiB)
+    total_value=$(echo "$line" | awk '{print $(NF-1)}')
+    total_unit=$(echo "$line" | awk '{print $NF}')
+    used_gb=$(hr_to_gb "$total_value" "$total_unit")
+  else
+    # Jika format berbeda, coba ambil total dari kolom ke-N (fallback)
+    total_field=$(vnstat -m -i "$iface" 2>/dev/null | awk -v m="$month_label" '$0~m{print $0}')
+    if [ -n "$total_field" ]; then
+      total_value=$(echo "$total_field" | awk '{print $(NF-1)}')
+      total_unit=$(echo "$total_field" | awk '{print $NF}')
+      used_gb=$(hr_to_gb "$total_value" "$total_unit")
+    fi
+  fi
+fi
+
+# Jika vnstat tidak tersedia atau gagal, fallback ke /sys (sejak boot)
+if [ "$(echo "$used_gb <= 0" | bc)" -eq 1 ]; then
+  rx_bytes=$(cat /sys/class/net/"$iface"/statistics/rx_bytes 2>/dev/null || echo 0)
+  tx_bytes=$(cat /sys/class/net/"$iface"/statistics/tx_bytes 2>/dev/null || echo 0)
+  sum_bytes=$((rx_bytes + tx_bytes))
+  # B -> GB: divide by 1,073,741,824 (1024^3)
+  used_gb=$(echo "scale=6; $sum_bytes/1073741824" | bc)
+  note_fallback="(sejak boot)"
+else
+  note_fallback="(bulan ini)"
+fi
+
+# Hitung tersisa
+# Pastikan BANDWIDTH_LIMIT_GB bukan nol
+if [ -z "$BANDWIDTH_LIMIT_GB" ] || [ "$BANDWIDTH_LIMIT_GB" = "0" ]; then
+  remaining_gb="N/A"
+  percent_used="N/A"
+else
+  remaining=$(echo "scale=6; $BANDWIDTH_LIMIT_GB - $used_gb" | bc)
+  # Jika negatif, set 0
+  remaining_gb=$(echo "$remaining < 0" | bc -l)
+  if [ "$remaining_gb" -eq 1 ]; then
+    remaining_gb="0"
+  else
+    remaining_gb=$(echo "scale=2; $BANDWIDTH_LIMIT_GB - $used_gb" | bc)
+  fi
+  # persentase
+  percent_used=$(echo "scale=2; ($used_gb / $BANDWIDTH_LIMIT_GB) * 100" | bc)
+  # cap percent to 100
+  percent_used=$(echo "$percent_used>100" | bc -l)
+  if [ "$percent_used" -eq 1 ]; then
+    percent_used="100"
+  else
+    percent_used=$(echo "scale=2; ($used_gb / $BANDWIDTH_LIMIT_GB) * 100" | bc)
+  fi
+fi
+
+# Format output (2 decimal)
+used_gb_fmt=$(printf "%.2f" "$used_gb" 2>/dev/null || echo "$used_gb")
+if [ "$remaining_gb" != "N/A" ]; then
+  remaining_gb_fmt=$(printf "%.2f" "$remaining_gb" 2>/dev/null || echo "$remaining_gb")
+else
+  remaining_gb_fmt="N/A"
+fi
 
 # ================= INFO VPS =================
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
@@ -318,7 +410,11 @@ echo -e "${BICyan} │  ISP       :  ${BIWhite}$ISP${NC}"
 echo -e "${BICyan} │  KOTA      :  ${BIWhite}$CITY, $COUNTRY${NC}"
 echo -e "${BICyan} │  REBOOT    :  ${BIWhite}02:00 ( Jam 2 malam )${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
-
+echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
+echo -e "${BICyan} │ ${BIWhite}TOTAL BANDWIDTH    : ${BIGold}$BANDWIDTH_LIMIT_GB GB (Kuota Bulanan)${NC}"
+echo -e "${BICyan} │ ${BIWhite}TERPAKAI ${note_fallback} : ${BIWhite}$used_gb_fmt GB${NC}"
+echo -e "${BICyan} │ ${BIWhite}TERSISA           : ${BIWhite}$remaining_gb_fmt GB  (${percent_used}% terpakai)${NC}"
+echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
 echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN ${NC}"
 echo -e "${BICyan} │  ${Blue} $ssh1            $vma               $vla               $tra ${NC}"
