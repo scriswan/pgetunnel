@@ -331,11 +331,6 @@ else
     }'
   }
 
-  if [ -r "$rx_file" ] && [ -r "$tx_file" ]; then
-    rx=$(cat "$rx_file")
-    tx=$(cat "$tx_file")
-    cur=$((rx + tx))
-
     today_file="$TRAFFIC_DIR/$(date +%F).snap"
     start_file="$TRAFFIC_DIR/$(date +%F).start"
 
