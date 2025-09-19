@@ -382,52 +382,68 @@ else
   fi
 fi
 # =======================================================
+# Warna
+NC='\e[0m'
+BICyan='\e[96;1m'
+BIYellow='\e[93;1m'
+BIGold='\e[38;5;220;1m'
+BIWhite='\e[97;1m'
+Blue='\e[94;1m'
 
+# Tampilan Info VPS
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
 echo -e "${BICyan} │           ${BIGold}WELCOME TO SCRIPT PGETUNNEL STORE${NC}"
-echo -e "${BICyan} │"
-echo -e "${BICyan} │  OS        :  ${BIWhite}$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '\"') ( $(uname -m) )${NC}"
-echo -e "${BICyan} │  RAM & CPU :  ${BIWhite}$totalram MB : $cpu_usage%${NC}"
-echo -e "${BICyan} │  DOMAIN    :  ${BIWhite}$DOMAIN${NC}"
-echo -e "${BICyan} │  IP VPS    :  ${BIWhite}$IPVPS${NC}"
-echo -e "${BICyan} │  ISP       :  ${BIWhite}$ISP${NC}"
-echo -e "${BICyan} │  KOTA      :  ${BIWhite}$CITY, $COUNTRY${NC}"
-echo -e "${BICyan} │  REBOOT    :  ${BIWhite}02:00 ( Jam 2 malam )${NC}"
-echo -e "${BICyan} │  ${BIWhite}Today : $today  Yesterday : $yesterday${NC}"
-echo -e "${BICyan} │  ${BIWhite}Month : $month  Total : $total${NC}"
+echo -e "${BICyan} │${NC}"
+echo -e "${BICyan} │  OS        : ${BIWhite}$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '\"') ( $(uname -m) )${NC}"
+echo -e "${BICyan} │  RAM & CPU : ${BIWhite}$totalram MB : $cpu_usage%${NC}"
+echo -e "${BICyan} │  DOMAIN    : ${BIWhite}$DOMAIN${NC}"
+echo -e "${BICyan} │  IP VPS    : ${BIWhite}$IPVPS${NC}"
+echo -e "${BICyan} │  ISP       : ${BIWhite}$ISP${NC}"
+echo -e "${BICyan} │  KOTA      : ${BIWhite}$CITY, $COUNTRY${NC}"
+echo -e "${BICyan} │  REBOOT    : ${BIWhite}02:00 ( Jam 2 Malam )${NC}"
+echo -e "${BICyan} │  Today:${BIWhite} $today ${NC}Yesterday:${BIWhite} $yesterday${NC}"
+echo -e "${BICyan} │  Month:${BIWhite} $month ${NC}Total:${BIWhite} $total${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
+
+# Jumlah Akun
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN $NC"
-echo -e "${BICyan} │  ${Blue} $ssh1            $vma               $vla               $tra $NC"
+echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN${NC}"
+echo -e "${BICyan} │  ${BIWhite}$ssh1           $vma             $vla             $tra${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
-echo -e "     ${BICyan} SSH ${NC}: $ressh"" ${BICyan} NGINX ${NC}: $resngx"" ${BICyan}  XRAY ${NC}: $resv2r"" ${BICyan} TROJAN ${NC}: $resv2r"
-echo -e "   ${BICyan}     STUNNEL ${NC}: $resst" "${BICyan} DROPBEAR ${NC}: $resdbr" "${BICyan} SSH-WS ${NC}: $ressshws"
+
+# Status Service
+echo -e "   ${BICyan}SSH ${NC}: $ressh   ${BICyan}NGINX ${NC}: $resngx   ${BICyan}XRAY ${NC}: $resv2r   ${BICyan}TROJAN ${NC}: $resv2r"
+echo -e "   ${BICyan}STUNNEL ${NC}: $resst   ${BICyan}DROPBEAR ${NC}: $resdbr   ${BICyan}SSH-WS ${NC}: $ressshws"
+
+# Menu
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │  ${BICyan}[${BIWhite}01${BICyan}] SSH     ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}08${BICyan}] ADD-HOST        ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
-echo -e "${BICyan} │  ${BICyan}[${BIWhite}02${BICyan}] VMESS   ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}09${BICyan}] RUNNING         ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
-echo -e "${BICyan} │  ${BICyan}[${BIWhite}03${BICyan}] VLESS   ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}10${BICyan}] INSTALL UDP     ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
-echo -e "${BICyan} │  ${BICyan}[${BIWhite}04${BICyan}] TROJAN  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}11${BICyan}] INSTALL BOT     ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
-echo -e "${BICyan} │  ${BICyan}[${BIWhite}05${BICyan}] SETING  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}12${BICyan}] BANDWITH        ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
-echo -e "${BICyan} │  ${BICyan}[${BIWhite}06${BICyan}] TRIALL  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}13${BICyan}] MENU THEME      ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
-echo -e "${BICyan} │  ${BICyan}[${BIWhite}07${BICyan}] BACKUP  ${BICyan}[${BIYellow}Menu${BICyan}]${NC}"  "${BICyan}  [${BIWhite}14${BICyan}] UPDATE SCRIPT   ${BICyan}[${BIYellow}Menu${BICyan}]${NC}" "${BICyan} │${NC}"
+echo -e "${BICyan} │  [${BIWhite}01${BICyan}] SSH        [${BIYellow}Menu${BICyan}]    [${BIWhite}08${BICyan}] ADD-HOST      [${BIYellow}Menu${BICyan}]${NC}"
+echo -e "${BICyan} │  [${BIWhite}02${BICyan}] VMESS      [${BIYellow}Menu${BICyan}]    [${BIWhite}09${BICyan}] RUNNING       [${BIYellow}Menu${BICyan}]${NC}"
+echo -e "${BICyan} │  [${BIWhite}03${BICyan}] VLESS      [${BIYellow}Menu${BICyan}]    [${BIWhite}10${BICyan}] INSTALL UDP   [${BIYellow}Menu${BICyan}]${NC}"
+echo -e "${BICyan} │  [${BIWhite}04${BICyan}] TROJAN     [${BIYellow}Menu${BICyan}]    [${BIWhite}11${BICyan}] INSTALL BOT   [${BIYellow}Menu${BICyan}]${NC}"
+echo -e "${BICyan} │  [${BIWhite}05${BICyan}] SETTING    [${BIYellow}Menu${BICyan}]    [${BIWhite}12${BICyan}] BANDWIDTH     [${BIYellow}Menu${BICyan}]${NC}"
+echo -e "${BICyan} │  [${BIWhite}06${BICyan}] TRIAL      [${BIYellow}Menu${BICyan}]    [${BIWhite}13${BICyan}] MENU THEME    [${BIYellow}Menu${BICyan}]${NC}"
+echo -e "${BICyan} │  [${BIWhite}07${BICyan}] BACKUP     [${BIYellow}Menu${BICyan}]    [${BIWhite}14${BICyan}] UPDATE SCRIPT [${BIYellow}Menu${BICyan}]${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
+
+# Informasi Lisensi
 DATE=$(date +'%d %B %Y')
 datediff() {
-d1=$(date -d "$1" +%s)
-d2=$(date -d "$2" +%s)
-echo -e "${BICyan}    │$NC ${BICyan}License Scriptt : $(cat /usr/bin/e) $(( (d1 - d2) / 86400 )) Days $NC"
+    d1=$(date -d "$1" +%s)
+    d2=$(date -d "$2" +%s)
+    echo -e "${BICyan} │${NC} License Script : ${BIWhite}$(cat /usr/bin/e) $(( (d1 - d2) / 86400 )) Days${NC}"
 }
 mai="datediff "$Exp" "$DATE""
-echo -e "${BICyan}    ┌───────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan}    │$NC ${BICyan}Version Script  : $(cat /opt/.ver) Last Update ${NC}"
-echo -e "${BICyan}    │$NC ${BICyan}Username        :\033[1;36m $Name \e[0m"
-if [ $exp \< 1000 ];
-then
-echo -e "${BICyan}    │$NC ${BICyan}License Script : ${BICyan}$sisa_hari$NC Days Tersisa $NC"
+
+echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
+echo -e "${BICyan} │${NC} Version Script : ${BIWhite}$(cat /opt/.ver)${NC}   Last Update"
+echo -e "${BICyan} │${NC} Username       : ${BIWhite}$Name${NC}"
+if [ $exp -lt 1000 ]; then
+    echo -e "${BICyan} │${NC} License Script : ${BIWhite}$sisa_hari${NC} Days Tersisa"
 else
-datediff "$Exp" "$DATE"
-fi;
-echo -e "${BICyan}    └───────────────────────────────────────────────┘${NC}"
+    datediff "$Exp" "$DATE"
+fi
+echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
 
 echo -e ""
 read -p "               Pilih Nomor └╼>>>  bro: " opt
