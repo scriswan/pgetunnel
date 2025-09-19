@@ -307,9 +307,6 @@ BIYellow="\e[1;93m"      # Bright Yellow + Bold
 Blue="\e[1;94m"          # Bright Blue + Bold
  
 # ----------------- TOTAL BANDWIDTH TERSISA -----------------
-# Set kuota bandwidth bulanan (GB) — ubah sesuai kebutuhan
-BANDWIDTH_LIMIT_GB=500
-
 # tentukan interface (sama cara Anda dapatkan iface sebelumnya)
 iface=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1);exit}}')
 [ -z "$iface" ] && iface="eth0"
@@ -411,7 +408,7 @@ echo -e "${BICyan} │  KOTA      :  ${BIWhite}$CITY, $COUNTRY${NC}"
 echo -e "${BICyan} │  REBOOT    :  ${BIWhite}02:00 ( Jam 2 malam )${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │ ${BIWhite}TOTAL BANDWIDTH    : ${BIGold}$BANDWIDTH_LIMIT_GB GB (Kuota Bulanan)${NC}"
+echo -e "${BICyan} │ ${BIWhite}TOTAL BANDWIDTH    : ${BIGold}(Kuota Bulanan)${NC}"
 echo -e "${BICyan} │ ${BIWhite}TERPAKAI ${note_fallback} : ${BIWhite}$used_gb_fmt GB${NC}"
 echo -e "${BICyan} │ ${BIWhite}TERSISA           : ${BIWhite}$remaining_gb_fmt GB  (${percent_used}% terpakai)${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
