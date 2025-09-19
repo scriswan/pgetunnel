@@ -346,8 +346,8 @@ echo -e "${BICyan}    │ ${BIWhite}License Script : $(cat /usr/bin/e) $(( (d1 -
 mai="datediff "$Exp" "$DATE""
 
 echo -e "${BICyan}    ┌───────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan}    │ ${BIWhite}Version Script  : $(cat /opt/.ver) Last Update ${NC}"
-echo -e "${BICyan}    │ ${BIWhite}Username        : ${BICyan}$Name${NC}"
+echo -e "${BICyan}    │ ${BIWhite}Version Script : $(cat /opt/.ver) Last Update ${NC}"
+echo -e "${BICyan}    │ ${BIWhite}Username       : $Name${NC}"
 if [ $exp \< 1000 ]; then
 echo -e "${BICyan}    │ ${BIWhite}License Script : ${BIGold}$sisa_hari${NC} Days Tersisa ${NC}"
 else
