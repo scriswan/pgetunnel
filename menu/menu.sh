@@ -298,9 +298,98 @@ ISP=$(curl -s https://ipinfo.io/$IPVPS/org | cut -d' ' -f2-)
 CITY=$(curl -s https://ipinfo.io/$IPVPS/city)
 COUNTRY=$(curl -s https://ipinfo.io/$IPVPS/country)
 
-# Tampilkan blok informasi VPS
+#!/bin/bash
+
+# ==================== TRAFFIC INFO =====================
+# Gunakan vnstat jika tersedia, fallback ke snapshot manual
+
+# pilih interface utama
+iface=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1);exit}}')
+[ -z "$iface" ] && iface="eth0"
+
+# Cek vnstat
+if command -v vnstat >/dev/null 2>&1; then
+  today=$(vnstat -i "$iface" | grep "today" | awk '{print $2" "$3}')
+  yesterday=$(vnstat -i "$iface" | grep "yesterday" | awk '{print $2" "$3}')
+  month=$(vnstat -i "$iface" | grep "$(date +%b)" | head -n1 | awk '{print $2" "$3}')
+  total=$(vnstat -i "$iface" | grep "total" | awk '{print $2" "$3}')
+else
+  # --- fallback snapshot ---
+  TRAFFIC_DIR="/var/log/pgetunnel/traffic"
+  mkdir -p "$TRAFFIC_DIR"
+
+  rx_file="/sys/class/net/$iface/statistics/rx_bytes"
+  tx_file="/sys/class/net/$iface/statistics/tx_bytes"
+
+  human() {
+    awk -v b="$1" 'BEGIN{
+      kib=1024; mib=kib*kib; gib=mib*kib;
+      if(b>=gib) printf "%.2f GiB", b/gib;
+      else if(b>=mib) printf "%.2f MiB", b/mib;
+      else if(b>=kib) printf "%.2f KiB", b/kib;
+      else printf "%d B", b;
+    }'
+  }
+
+  if [ -r "$rx_file" ] && [ -r "$tx_file" ]; then
+    rx=$(cat "$rx_file")
+    tx=$(cat "$tx_file")
+    cur=$((rx + tx))
+
+    today_file="$TRAFFIC_DIR/$(date +%F).snap"
+    start_file="$TRAFFIC_DIR/$(date +%F).start"
+
+    [ ! -f "$start_file" ] && echo "$cur" > "$start_file"
+    echo "$cur" > "$today_file"
+
+    start_cur=$(cat "$start_file")
+    today_bytes=$((cur - start_cur))
+    [ "$today_bytes" -lt 0 ] && today_bytes=$cur
+
+    # yesterday
+    yfile_start="$TRAFFIC_DIR/$(date -d "yesterday" +%F).start"
+    yfile_end="$TRAFFIC_DIR/$(date -d "yesterday" +%F).snap"
+    if [ -f "$yfile_start" ] && [ -f "$yfile_end" ]; then
+      ystart=$(cat "$yfile_start")
+      yend=$(cat "$yfile_end")
+      yesterday_bytes=$((yend - ystart))
+      [ "$yesterday_bytes" -lt 0 ] && yesterday_bytes=$yend
+    else
+      yesterday_bytes=0
+    fi
+
+    # month
+    month_bytes=0
+    for f in "$TRAFFIC_DIR"/$(date +%Y-%m)-*.start; do
+      [ ! -f "$f" ] && continue
+      day=$(basename "$f" .start)
+      s=$(cat "$f")
+      efile="$TRAFFIC_DIR/$day.snap"
+      if [ -f "$efile" ]; then
+        e=$(cat "$efile")
+        delta=$((e - s))
+        [ "$delta" -lt 0 ] && delta=$e
+        month_bytes=$((month_bytes + delta))
+      fi
+    done
+
+    # total (lifetime)
+    lifetime_file="$TRAFFIC_DIR/total.bytes"
+    [ ! -f "$lifetime_file" ] && echo "$cur" > "$lifetime_file"
+    total_bytes=$(cat "$lifetime_file")
+
+    today=$(human "$today_bytes")
+    yesterday=$(human "$yesterday_bytes")
+    month=$(human "$month_bytes")
+    total=$(human "$total_bytes")
+  else
+    today="N/A"; yesterday="N/A"; month="N/A"; total="N/A"
+  fi
+fi
+# =======================================================
+
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
-echo -e "${BICyan} │           ${BICyan}WELCOME TO SCRIPT PGETUNNEL STORE${NC}"
+echo -e "${BICyan} │           ${BIGold}WELCOME TO SCRIPT PGETUNNEL STORE${NC}"
 echo -e "${BICyan} │"
 echo -e "${BICyan} │  OS        :  ${BIWhite}$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '\"') ( $(uname -m) )${NC}"
 echo -e "${BICyan} │  RAM & CPU :  ${BIWhite}$totalram MB : $cpu_usage%${NC}"
@@ -309,6 +398,8 @@ echo -e "${BICyan} │  IP VPS    :  ${BIWhite}$IPVPS${NC}"
 echo -e "${BICyan} │  ISP       :  ${BIWhite}$ISP${NC}"
 echo -e "${BICyan} │  KOTA      :  ${BIWhite}$CITY, $COUNTRY${NC}"
 echo -e "${BICyan} │  REBOOT    :  ${BIWhite}02:00 ( Jam 2 malam )${NC}"
+echo -e "${BICyan} │  TRAFIK    :  ${BIWhite}Today: $today  Yesterday: $yesterday${NC}"
+echo -e "${BICyan} │            :  ${BIWhite}Month: $month  Total: $total${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
 echo -e "${BICyan} ┌─────────────────────────────────────────────────────┐${NC}"
 echo -e "${BICyan} │  ${BIYellow}SSH         VMESS           VLESS          TROJAN $NC"
