@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Tentukan file output untuk menyimpan hasil
+OUTPUT_FILE="trial_accounts.txt"
+
+# Tulis header ke file output
+echo "════════════════════════════════════════════════" > "$OUTPUT_FILE"
+echo "List Akun Trial" >> "$OUTPUT_FILE"
+echo "════════════════════════════════════════════════" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Mengekstrak akun trial SSH
+echo "Trial SSH Accounts:" >> "$OUTPUT_FILE"
+grep "trial" /etc/passwd | grep "home" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Mengekstrak akun trial VMESS
+echo "Trial VMESS Accounts:" >> "$OUTPUT_FILE"
+grep "trial" /etc/vmess/.vmess.db >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Mengekstrak akun trial VLESS
+echo "Trial VLESS Accounts:" >> "$OUTPUT_FILE"
+grep "trial" /etc/vless/.vless.db >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Mengekstrak akun trial TROJAN
+echo "Trial TROJAN Accounts:" >> "$OUTPUT_FILE"
+grep "trial" /etc/trojan/.trojan.db >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Menyelesaikan dan memberi tahu lokasi file
+echo "════════════════════════════════════════════════" >> "$OUTPUT_FILE"
+echo "Hasil telah disimpan ke dalam: $OUTPUT_FILE" >> "$OUTPUT_FILE"
