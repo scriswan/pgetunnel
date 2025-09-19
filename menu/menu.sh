@@ -347,7 +347,7 @@ echo -e "${BICyan} │  [${BIWhite}02${BICyan}] VMESS   [${BIYellow}Menu${BICyan
 echo -e "${BICyan} │  [${BIWhite}03${BICyan}] VLESS   [${BIYellow}Menu${BICyan}]    [${BIWhite}10${BICyan}] INSTALL UDP     [${BIYellow}Menu${BICyan}] │${NC}"
 echo -e "${BICyan} │  [${BIWhite}04${BICyan}] TROJAN  [${BIYellow}Menu${BICyan}]    [${BIWhite}11${BICyan}] INSTALL BOT     [${BIYellow}Menu${BICyan}] │${NC}"
 echo -e "${BICyan} │  [${BIWhite}05${BICyan}] SETING  [${BIYellow}Menu${BICyan}]    [${BIWhite}12${BICyan}] BANDWITH        [${BIYellow}Menu${BICyan}] │${NC}"
-echo -e "${BICyan} │  [${BIWhite}06${BICyan}] TRIALL  [${BIYellow}Menu${BICyan}]    [${BIWhite}13${BICyan}] MENU THEME      [${BIYellow}Menu${BICyan}] │${NC}"
+echo -e "${BICyan} │  [${BIWhite}06${BICyan}] TRIALL  [${BIYellow}Menu${BICyan}]    [${BIWhite}13${BICyan}] BOT SELLVPN     [${BIYellow}Menu${BICyan}] │${NC}"
 echo -e "${BICyan} │  [${BIWhite}07${BICyan}] BACKUP  [${BIYellow}Menu${BICyan}]    [${BIWhite}14${BICyan}] UPDATE SCRIPT   [${BIYellow}Menu${BICyan}] │${NC}"
 echo -e "${BICyan} └─────────────────────────────────────────────────────┘${NC}"
 
@@ -385,7 +385,7 @@ case $opt in
 10) clear ; wget https://raw.githubusercontent.com/scriswan/pgetunnel/main/files/udp-custom.sh && chmod +x udp-custom.sh && ./udp-custom.sh ;;
 11) clear ; menu-bot ;;
 12) clear ; bw ;;
-13) clear ; menu-theme ;;
+13) clear ; bash <(curl -sL https://raw.githubusercontent.com/scriswan/pgetunnel/main/install.sellvpn.sh)  ;;
 14) clear ; update ;;
 0) clear ; menu ;;
 x) exit ;;
