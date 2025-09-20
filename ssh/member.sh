@@ -9,31 +9,21 @@ echo -e "\E[40;1;37m                 MEMBER SSH               \E[0m"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"      
 echo "USERNAME          EXP DATE          STATUS"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-
 while read expired
 do
-    AKUN="$(echo $expired | cut -d: -f1)"
-    ID="$(echo $expired | grep -v nobody | cut -d: -f3)"
-
-    # Skip user trial
-    if [[ $AKUN == trial* ]]; then
-        continue
-    fi
-
-    exp="$(chage -l $AKUN | grep "Account expires" | awk -F": " '{print $2}')"
-    status="$(passwd -S $AKUN | awk '{print $2}' )"
-
-    if [[ $ID -ge 1000 ]]; then
-        if [[ "$status" = "L" ]]; then
-            printf "%-15s %2s %-15s %2s \n" "$AKUN" "$exp     " "LOCKED"
-        else
-            printf "%-15s %2s %-15s %2s \n" "$AKUN" "$exp     " "UNLOCKED"
-        fi
-    fi
+AKUN="$(echo $expired | cut -d: -f1)"
+ID="$(echo $expired | grep -v nobody | cut -d: -f3)"
+exp="$(chage -l $AKUN | grep "Account expires" | awk -F": " '{print $2}')"
+status="$(passwd -S $AKUN | awk '{print $2}' )"
+if [[ $ID -ge 1000 ]]; then
+if [[ "$status" = "L" ]]; then
+printf "%-15s %2s %-15s %2s \n" "$AKUN" "$exp     " "LOCKED"
+else
+printf "%-15s %2s %-15s %2s \n" "$AKUN" "$exp     " "UNLOCKED"
+fi
+fi
 done < /etc/passwd
-
-JUMLAH="$(awk -F: '$3 >= 1000 && $1 != "nobody" && $1 !~ /^trial/ {print $1}' /etc/passwd | wc -l)"
-
+JUMLAH="$(awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd | wc -l)"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo "Account number: $JUMLAH user"
 echo -e "\e[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
