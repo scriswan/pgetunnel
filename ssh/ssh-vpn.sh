@@ -11,7 +11,7 @@ organization=none
 organizationalunit=none
 commonname=none
 email=andyyuda51@gmail.com
-curl -sS https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/password | openssl aes-256-cbc -d -a -pass pass:scvps07gg -pbkdf2 > /etc/pam.d/common-password
+curl -sS https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/password | openssl aes-256-cbc -d -a -pass pass:scvps07gg -pbkdf2 > /etc/pam.d/common-password
 chmod +x /etc/pam.d/common-password
 cd
 cat > /etc/systemd/system/rc-local.service <<-END
@@ -84,11 +84,11 @@ apt -y install nginx
 cd
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/nginx.conf"
+wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/nginx.conf"
 mkdir -p /home/vps/public_html
 /etc/init.d/nginx restart
 cd
-wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/newudpgw"
+wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/newudpgw"
 chmod +x /usr/bin/badvpn-udpgw
 sed -i '$ i\screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7100 --max-clients 500' /etc/rc.local
 sed -i '$ i\screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7200 --max-clients 500' /etc/rc.local
@@ -153,11 +153,11 @@ echo 'Config file is at /usr/local/ddos/ddos.conf'
 echo 'Please send in your comments and/or suggestions to zaf@vsnl.com'
 sleep 1
 echo -e "[ ${green}INFO$NC ] Settings banner"
-wget -q -O /etc/issue.net "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/issue.net"
+wget -q -O /etc/issue.net "https://raw.githubusercontent.com/scriswan/pgetunnel/main/issue.net"
 chmod +x /etc/issue.net
 echo "Banner /etc/issue.net" >> /etc/ssh/sshd_config
 sed -i 's@DROPBEAR_BANNER=""@DROPBEAR_BANNER="/etc/issue.net"@g' /etc/default/dropbear
-wget https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/bbr.sh && chmod +x bbr.sh && ./bbr.sh
+wget https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/bbr.sh && chmod +x bbr.sh && ./bbr.sh
 iptables -A FORWARD -m string --string "get_peers" --algo bm -j DROP
 iptables -A FORWARD -m string --string "announce_peer" --algo bm -j DROP
 iptables -A FORWARD -m string --string "find_node" --algo bm -j DROP
@@ -174,69 +174,69 @@ iptables-restore -t < /etc/iptables.up.rules
 netfilter-persistent save
 netfilter-persistent reload
 cd /usr/bin
-wget -O menu "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu.sh"
-wget -O menu-trial "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-trial.sh"
-wget -O menu-vmess "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-vmess.sh"
-wget -O menu-vless "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-vless.sh"
-wget -O running "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/running.sh"
-wget -O clearcache "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/clearcache.sh"
-wget -O menu-trgo "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-trgo.sh"
-wget -O menu-trojan "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-trojan.sh"
-wget -O menu-ssh "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-ssh.sh"
-wget -O usernew "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/usernew.sh"
-wget -O trial "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/trial.sh"
-wget -O renew "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/renew.sh"
-wget -O hapus "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/hapus.sh"
-wget -O cek "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/cek.sh"
-wget -O member "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/member.sh"
-wget -O delete "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/delete.sh"
-wget -O autokill "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/autokill.sh"
-wget -O ceklim "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/ceklim.sh"
-wget -O tendang "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/tendang.sh"
-wget -O xp "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/xp.sh"
-wget -O menu-set "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-set.sh"
-wget -O menu-domain "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-domain.sh"
-wget -O add-host "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/add-host.sh"
-wget -O port-change "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/port/port-change.sh"
-wget -O certv2ray "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/xray/certv2ray.sh"
-wget -O menu-webmin "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-webmin.sh"
-wget -O speedtest "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/ssh/speedtest_cli.py"
-wget -O about "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/about.sh"
-wget -O auto-reboot "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/auto-reboot.sh"
-wget -O restart "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/restart.sh"
-wget -O bw "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/bw.sh"
-wget -O menu-theme "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/theme/menu-theme.sh"
-wget -O menu1 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/theme/menu1.sh"
-wget -O menu2 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/theme/menu2.sh"
-wget -O menu3 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/theme/menu3.sh"
-wget -O menu4 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/theme/menu4.sh"
-wget -O menu5 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/theme/menu5.sh"
-wget -O port-ssl "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/port/port-ssl.sh"
-wget -O port-ovpn "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/port/port-ovpn.sh"
-wget -O acs-set "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/acs-set.sh"
-wget -O status "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/status.sh"
-wget -O sshws "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/sshws/sshws.sh"
-wget -O status "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/status.sh"
-wget -O menu-backup "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-backup.sh"
-wget -O backup "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/backup/backup.sh"
-wget -O restore "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/backup/restore.sh"
-wget -O jam "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/jam.sh"
-wget -q -O /usr/bin/xolpanel "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/xolpanel/xolpanel.sh"
-wget -q -O /usr/bin/lock "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/user-lock.sh"
-wget -q -O /usr/bin/unlock "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/user-unlock.sh"
-wget -q -O /usr/bin/update "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/update.sh"
-wget -q -O /usr/bin/bot2 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/bot2.sh"
-wget -q -O /usr/bin/add-bot "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/add-bot.sh"
-wget -q -O /usr/bin/add-bot-bersama "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/add-bot-bersama.sh"
-wget -q -O /usr/bin/bot-bansos "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/bot-bansos.sh"
-wget -q -O /usr/bin/stop-bot "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/stop-bot.sh"
-wget -q -O /usr/bin/stop-bot2 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/stop-bot2.sh"
-wget -q -O /usr/bin/restart-bot "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/restart-bot.sh"
-wget -q -O /usr/bin/restart-bot2 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/restart-bot2.sh"
-wget -q -O /usr/bin/hapus-bot "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/hapus-bot.sh"
-wget -q -O /usr/bin/del-bot2 "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/bot/del-bot2.sh"
-wget -q -O /usr/bin/update "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/update.sh"
-wget -q -O /usr/bin/menu-bot "https://raw.githubusercontent.com/scpremium1/jesstunnel/main/menu/menu-bot.sh"
+wget -O menu "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu.sh"
+wget -O menu-trial "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-trial.sh"
+wget -O menu-vmess "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-vmess.sh"
+wget -O menu-vless "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-vless.sh"
+wget -O running "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/running.sh"
+wget -O clearcache "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/clearcache.sh"
+wget -O menu-trgo "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-trgo.sh"
+wget -O menu-trojan "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-trojan.sh"
+wget -O menu-ssh "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-ssh.sh"
+wget -O usernew "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/usernew.sh"
+wget -O trial "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/trial.sh"
+wget -O renew "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/renew.sh"
+wget -O hapus "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/hapus.sh"
+wget -O cek "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/cek.sh"
+wget -O member "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/member.sh"
+wget -O delete "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/delete.sh"
+wget -O autokill "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/autokill.sh"
+wget -O ceklim "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/ceklim.sh"
+wget -O tendang "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/tendang.sh"
+wget -O xp "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/xp.sh"
+wget -O menu-set "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-set.sh"
+wget -O menu-domain "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-domain.sh"
+wget -O add-host "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/add-host.sh"
+wget -O port-change "https://raw.githubusercontent.com/scriswan/pgetunnel/main/port/port-change.sh"
+wget -O certv2ray "https://raw.githubusercontent.com/scriswan/pgetunnel/main/xray/certv2ray.sh"
+wget -O menu-webmin "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-webmin.sh"
+wget -O speedtest "https://raw.githubusercontent.com/scriswan/pgetunnel/main/ssh/speedtest_cli.py"
+wget -O about "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/about.sh"
+wget -O auto-reboot "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/auto-reboot.sh"
+wget -O restart "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/restart.sh"
+wget -O bw "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/bw.sh"
+wget -O menu-theme "https://raw.githubusercontent.com/scriswan/pgetunnel/main/theme/menu-theme.sh"
+wget -O menu1 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/theme/menu1.sh"
+wget -O menu2 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/theme/menu2.sh"
+wget -O menu3 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/theme/menu3.sh"
+wget -O menu4 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/theme/menu4.sh"
+wget -O menu5 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/theme/menu5.sh"
+wget -O port-ssl "https://raw.githubusercontent.com/scriswan/pgetunnel/main/port/port-ssl.sh"
+wget -O port-ovpn "https://raw.githubusercontent.com/scriswan/pgetunnel/main/port/port-ovpn.sh"
+wget -O acs-set "https://raw.githubusercontent.com/scriswan/pgetunnel/main/acs-set.sh"
+wget -O status "https://raw.githubusercontent.com/scriswan/pgetunnel/main/status.sh"
+wget -O sshws "https://raw.githubusercontent.com/scriswan/pgetunnel/main/sshws/sshws.sh"
+wget -O status "https://raw.githubusercontent.com/scriswan/pgetunnel/main/status.sh"
+wget -O menu-backup "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-backup.sh"
+wget -O backup "https://raw.githubusercontent.com/scriswan/pgetunnel/main/backup/backup.sh"
+wget -O restore "https://raw.githubusercontent.com/scriswan/pgetunnel/main/backup/restore.sh"
+wget -O jam "https://raw.githubusercontent.com/scriswan/pgetunnel/main/jam.sh"
+wget -q -O /usr/bin/xolpanel "https://raw.githubusercontent.com/scriswan/pgetunnel/main/xolpanel/xolpanel.sh"
+wget -q -O /usr/bin/lock "https://raw.githubusercontent.com/scriswan/pgetunnel/main/user-lock.sh"
+wget -q -O /usr/bin/unlock "https://raw.githubusercontent.com/scriswan/pgetunnel/main/user-unlock.sh"
+wget -q -O /usr/bin/update "https://raw.githubusercontent.com/scriswan/pgetunnel/main/update.sh"
+wget -q -O /usr/bin/bot2 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/bot2.sh"
+wget -q -O /usr/bin/add-bot "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/add-bot.sh"
+wget -q -O /usr/bin/add-bot-bersama "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/add-bot-bersama.sh"
+wget -q -O /usr/bin/bot-bansos "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/bot-bansos.sh"
+wget -q -O /usr/bin/stop-bot "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/stop-bot.sh"
+wget -q -O /usr/bin/stop-bot2 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/stop-bot2.sh"
+wget -q -O /usr/bin/restart-bot "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/restart-bot.sh"
+wget -q -O /usr/bin/restart-bot2 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/restart-bot2.sh"
+wget -q -O /usr/bin/hapus-bot "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/hapus-bot.sh"
+wget -q -O /usr/bin/del-bot2 "https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/del-bot2.sh"
+wget -q -O /usr/bin/update "https://raw.githubusercontent.com/scriswan/pgetunnel/main/update.sh"
+wget -q -O /usr/bin/menu-bot "https://raw.githubusercontent.com/scriswan/pgetunnel/main/menu/menu-bot.sh"
 chmod +x xolpanel
 chmod +x menu
 chmod +x menu-trial
