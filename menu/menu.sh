@@ -1,4 +1,4 @@
-#!/bin/bash
+ho#!/bin/bash
 
 BURIQ () {
     # Mengunduh daftar register dari URL baru dan menyimpannya ke dalam file sementara
@@ -381,7 +381,7 @@ case $opt in
 7) clear ; menu-backup ;;
 8) clear ; add-host ;;
 9) clear ; running ;;
-10) clear ; wget -q https://raw.githubusercontent.com/scriswan/pgetunn/main/udepe.sh && chmod +x udepe.sh && ./udepe.sh && rm -f udepe.sh  ;;
+10) clear ; wget https://raw.githubusercontent.com/gemilangvip/autoscript/main/files/udp-custom.sh && chmod +x udp-custom.sh && ./udp-custom.sh  ;;
 11) clear ; menu-bot ;;
 12) clear ; bw ;;
 13) clear ; bash <(curl -sL https://raw.githubusercontent.com/scriswan/pgetunnel/main/install.sellvpn.sh)  ;;
