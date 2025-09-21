@@ -69,6 +69,12 @@ echo -e "  ${LIGHTGREEN}[2].${NC}\033[1;97m Restart Bot Reseller${NC}"
 echo -e "  ${LIGHTGREEN}[3].${NC}\033[1;97m Stop Bot Reseller${NC}"
 echo -e "  ${LIGHTGREEN}[4].${NC}\033[1;97m Hapus bot Reseller${NC}"
 echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+echo -e "  ${LIGHTGREEN}[5].${NC}\033[1;97m Install Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[6].${NC}\033[1;97m Hapus Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[7].${NC}\033[1;97m Stop Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[8].${NC}\033[1;97m Restart Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[x].${NC}\033[1;97m Exit ${NC}"
+echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
 }
 
 # Fungsi utama
@@ -126,4 +132,3 @@ function main {
 
 # Jalankan fungsi utama
 main
-
