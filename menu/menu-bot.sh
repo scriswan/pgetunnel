@@ -28,62 +28,103 @@ else
     exit 0
 fi
 
+# Color Definitions
+BIBlack='\033[1;90m'
+BIRed='\033[1;91m'
+BIGreen='\033[1;92m'
+BIYellow='\033[1;93m'
+BIBlue='\033[1;94m'
+BIPurple='\033[1;95m'
+BICyan='\033[1;96m'
+BIWhite='\033[1;97m'
+UWhite='\033[4;37m'
+On_IPurple='\033[0;105m'
+On_IRed='\033[0;101m'
+ORANGE='\033[0;33m'
+
 # Exporting Language to UTF-8
 export LANG='en_US.UTF-8'
 export LANGUAGE='en_US.UTF-8'
 
-# -------------------------------
-# Tampilan Menu
-# -------------------------------
-function display_menu {
-    LIGHTGREEN="\033[1;32m"
-    NC="\033[0m"
+MYIP=$(wget -qO- ipinfo.io/ip)
+echo "Checking VPS"
 
-    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-    echo -e "\e[44;97;1m               BOT TELEGRAM               $NC"
-    echo -e "\033[1;32m Anda bisa mengunakan bot untuk membuat akun\033[0m"
-    echo -e "\033[1;32m lewat telegram. Silahkan buat bot di\033[0m"
-    echo -e "\033[1;32m @BotFather, ambil token & cek ID via\033[0m"
-    echo -e "\033[1;32m @CekIDTelegram_bot.\033[0m"
-    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-    echo -e "  ${LIGHTGREEN}[1].${NC}\033[1;97m Install Bot Reseller${NC}"
-    echo -e "  ${LIGHTGREEN}[2].${NC}\033[1;97m Restart Bot Reseller${NC}"
-    echo -e "  ${LIGHTGREEN}[3].${NC}\033[1;97m Stop Bot Reseller${NC}"
-    echo -e "  ${LIGHTGREEN}[4].${NC}\033[1;97m Hapus Bot Reseller${NC}"
-    echo -e "  ${LIGHTGREEN}[5].${NC}\033[1;97m Install Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[6].${NC}\033[1;97m Hapus Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[7].${NC}\033[1;97m Stop Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[8].${NC}\033[1;97m Restart Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[9].${NC}\033[1;97m Ganti Custom Command Bot${NC}"
-    echo -e "  ${LIGHTGREEN}[x].${NC}\033[1;97m Exit ${NC}"
-    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+clear
+function display_menu {
+    # Define color variables
+LIGHTGREEN="\033[1;32m"
+NC="\033[0m"  # Reset color
+
+echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+echo -e "\e[44;97;1m               BOT TELEGRAM               $NC"
+echo -e "\033[1;32m anda bisa mengunakan bot simpel untuk\033[0m"
+echo -e "\033[1;32m membuat akun lewat telegram silahkan\033[0m"
+echo -e "\033[1;32m anda buat bot di telegram cari bot\033[0m"
+echo -e "\033[1;32m @BotFather silahkan buat bot anda ambil\033[0m"
+echo -e "\033[1;32m token&id anda untuk cek id\033[0m"
+echo -e "\033[1;32m @CekIDTelegram_bot\033[0m"
+echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+echo -e "  ${LIGHTGREEN}[1].${NC}\033[1;97m Install Bot Reseller${NC}"
+echo -e "  ${LIGHTGREEN}[2].${NC}\033[1;97m Restart Bot Reseller${NC}"
+echo -e "  ${LIGHTGREEN}[3].${NC}\033[1;97m Stop Bot Reseller${NC}"
+echo -e "  ${LIGHTGREEN}[4].${NC}\033[1;97m Hapus bot Reseller${NC}"
+echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+echo -e "  ${LIGHTGREEN}[5].${NC}\033[1;97m Install Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[6].${NC}\033[1;97m Hapus Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[7].${NC}\033[1;97m Stop Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[8].${NC}\033[1;97m Restart Bot private${NC}"
+echo -e "  ${LIGHTGREEN}[x].${NC}\033[1;97m Exit ${NC}"
+echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
 }
 
-# -------------------------------
 # Fungsi utama
-# -------------------------------
 function main {
     while true; do
         display_menu
-        read -p "Select From Options [ 1 - 9 or x ] : " menu
+        read -p "Select From Options [ 1 - 10 or x ] : " menu
         echo -e ""
 
         case $menu in
-            1) echo "Installing BOT CYBERVPN..."; bot2 ;;
-            2) echo "Restarting BOT CYBERVPN..."; restart-bot2 ;;
-            3) echo "Stopping BOT CYBERVPN..."; stop-bot2 ;;
-            4) echo "Uninstalling BOT CYBERVPN..."; del-bot2 ;;
-            5) echo "Installing Bot KYT..."; add-bot ;;
-            6) echo "Hapus Bot KYT..."; hapus-bot ;;
-            7) echo "Stopping Bot KYT..."; stop-bot ;;
-            8) echo "Restarting Bot KYT..."; restart-bot ;;
-            9)
-                read -p "Masukkan command baru (contoh: menu / panel / akses): " cmd
-                echo "$cmd" > /etc/bot_command.conf
-                echo "✅ Custom command bot disimpan: $cmd"
+            1)
+                echo "Installing BOT CYBERVPN..."
+                bot2
                 ;;
-            x) echo "Exiting..."; break ;;
-            *) echo "Pilihan tidak valid." ;;
+            2)
+                echo "Restarting BOT CYBERVPN..."
+                restart-bot2
+                ;;
+            3)
+                echo "Stopping BOT CYBERVPN..."
+                stop-bot2
+                ;;
+            4)
+                echo "Uninstalling BOT CYBERVPN..."
+                del-bot2
+                ;;
+            5)
+                echo "Installing Bot KYT..."
+                add-bot
+                ;;
+            6)
+                echo "Hapus Bot KYT..."
+                hapus-bot
+                ;;
+            7)
+                echo "Stopping Bot KYT..."
+                stop-bot
+                ;;
+            8)
+                echo "Restarting Bot KYT..."
+                restart-bot
+                ;;
+            
+            x)
+                echo "Exiting..."
+                menu
+                ;;
+            *)
+                echo "Pilihan tidak valid."
+                ;;
         esac
         echo -e "\n"
     done
