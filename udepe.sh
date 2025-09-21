@@ -1,51 +1,59 @@
 #!/bin/bash
+# ==========================================
+# Installer UDP-Custom Auto Start (By Lite)
+# ==========================================
+
 BIWhite='\033[1;97m'
 BIYellow='\033[1;93m'
 NC='\033[0m'
 clear
+
 function loading() {
-  clear
   local pid=$1
   local delay=0.1
   local spin='-\|/'
-
   while ps -p $pid > /dev/null; do
     local temp=${spin#?}
-    printf "[%c] " "$spin"
+    printf " [%c]  " "$spin"
     local spin=$temp${spin%"$temp"}
     sleep $delay
     printf "\b\b\b\b\b\b"
   done
-
-  printf "    \b\b\b\b"
 }
 
+# Hentikan service lama jika ada
 systemctl stop udp-custom &>/dev/null
 systemctl disable udp-custom &>/dev/null
-rm -rf /etc/systemd/system/udp-custom.service &>/dev/null
+rm -f /etc/systemd/system/udp-custom.service
 systemctl daemon-reload
-cd
+
+# Hapus folder lama
 rm -rf /root/udp &>/dev/null
-echo -e "${BIWhite}change to time GMT+7${NC}"
+mkdir -p /root/udp
+cd /root || exit 1
+
+# Ganti timezone
+echo -e "${BIWhite}Mengganti timezone ke GMT+7...${NC}"
 ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 
-sleep 1
-echo -e "${BIWhite}downloading udp-custom${NC}"
-sleep 1
-echo -e "${BIWhite}downloading default config${NC}"
-wget -q https://raw.githubusercontent.com/scriswan/pgetunnel/main/udp.zip
-unzip udp.zip
-clear
-echo -e "${BIWhite}Loading....${NC}"
-sleep 2
+# Download binary & config
+echo -e "${BIWhite}Mengunduh udp-custom...${NC}"
+wget -q -O udp.zip "https://raw.githubusercontent.com/scriswan/pgetunnel/main/udp.zip" || {
+  echo -e "${BIYellow}Gagal mengunduh udp.zip!${NC}"
+  exit 1
+}
+
+unzip -o udp.zip -d /root/udp/ &>/dev/null
+rm -f udp.zip
 chmod +x /root/udp/udp-custom
-sleep 2
 chmod 644 /root/udp/config.json
 
+# Buat service systemd
 if [ -z "$1" ]; then
-cat <<EOF > /etc/systemd/system/udp-custom.service
+cat > /etc/systemd/system/udp-custom.service <<EOF
 [Unit]
 Description=UDP Custom By Lite
+After=network.target
 
 [Service]
 User=root
@@ -53,15 +61,16 @@ Type=simple
 ExecStart=/root/udp/udp-custom server
 WorkingDirectory=/root/udp/
 Restart=always
-RestartSec=2s
+RestartSec=3
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
 EOF
 else
-cat <<EOF > /etc/systemd/system/udp-custom.service
+cat > /etc/systemd/system/udp-custom.service <<EOF
 [Unit]
 Description=UDP Custom By Lite
+After=network.target
 
 [Service]
 User=root
@@ -69,27 +78,33 @@ Type=simple
 ExecStart=/root/udp/udp-custom server -exclude $1
 WorkingDirectory=/root/udp/
 Restart=always
-RestartSec=2s
+RestartSec=3
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
 EOF
 fi
 
-rm -rf /root/udp.zip &>/dev/null
-sleep 1
-echo -e "${BIWhite}Mereload Service...${NC}"
+# Reload & enable service
+echo -e "${BIWhite}Mengaktifkan service udp-custom...${NC}"
 systemctl daemon-reload
-sleep 1
-echo -e "${BIWhite}Mengaktifkan Service...${NC}"
-systemctl enable --now udp-custom &>/dev/null
-sleep 1
-echo -e "${BIWhite}Merestart Service...${NC}"
+systemctl enable udp-custom &>/dev/null
 systemctl restart udp-custom &>/dev/null
-sleep 3 & loading $!
-echo -e "${BIWhite}Successfully Installed UDP Custom${NC}"
 
-# LANGSUNG KE MENU
+sleep 3 & loading $!
+
+# Status
+if systemctl is-active --quiet udp-custom; then
+  echo -e "\n${BIWhite}✅ UDP Custom berhasil diinstall & berjalan.${NC}"
+else
+  echo -e "\n${BIYellow}⚠️ UDP Custom gagal dijalankan. Cek log dengan:${NC} journalctl -u udp-custom -f"
+fi
+
+# Langsung ke menu (kalau ada fungsi menu di script kamu)
 sleep 1
 clear
-menu
+if command -v menu >/dev/null 2>&1; then
+  menu
+else
+  echo -e "${BIWhite}Ketik 'menu' untuk masuk panel utama.${NC}"
+fi
