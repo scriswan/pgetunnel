@@ -50,38 +50,63 @@ MYIP=$(wget -qO- ipinfo.io/ip)
 echo "Checking VPS"
 
 clear
-function display_menu {
-    # Define color variables
-LIGHTGREEN="\033[1;32m"
-NC="\033[0m"  # Reset color
 
-echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-echo -e "\e[44;97;1m               BOT TELEGRAM               $NC"
-echo -e "\033[1;32m anda bisa mengunakan bot simpel untuk\033[0m"
-echo -e "\033[1;32m membuat akun lewat telegram silahkan\033[0m"
-echo -e "\033[1;32m anda buat bot di telegram cari bot\033[0m"
-echo -e "\033[1;32m @BotFather silahkan buat bot anda ambil\033[0m"
-echo -e "\033[1;32m token&id anda untuk cek id\033[0m"
-echo -e "\033[1;32m @CekIDTelegram_bot\033[0m"
-echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-echo -e "  ${LIGHTGREEN}[1].${NC}\033[1;97m Install Bot Reseller${NC}"
-echo -e "  ${LIGHTGREEN}[2].${NC}\033[1;97m Restart Bot Reseller${NC}"
-echo -e "  ${LIGHTGREEN}[3].${NC}\033[1;97m Stop Bot Reseller${NC}"
-echo -e "  ${LIGHTGREEN}[4].${NC}\033[1;97m Hapus bot Reseller${NC}"
-echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-echo -e "  ${LIGHTGREEN}[5].${NC}\033[1;97m Install Bot private${NC}"
-echo -e "  ${LIGHTGREEN}[6].${NC}\033[1;97m Hapus Bot private${NC}"
-echo -e "  ${LIGHTGREEN}[7].${NC}\033[1;97m Stop Bot private${NC}"
-echo -e "  ${LIGHTGREEN}[8].${NC}\033[1;97m Restart Bot private${NC}"
-echo -e "  ${LIGHTGREEN}[x].${NC}\033[1;97m Exit ${NC}"
-echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+# ===== FUNGSI TAMBAHAN =====
+function ganti-nama-bot {
+    config_file="/root/bot/config.json"
+    if [ ! -f "$config_file" ]; then
+        echo "File config tidak ditemukan di $config_file"
+        return
+    fi
+    read -p "Masukkan nama panggilan bot baru: " newname
+    sed -i "s/\"bot_name\": \".*\"/\"bot_name\": \"$newname\"/" "$config_file"
+    echo "Nama panggilan bot berhasil diganti menjadi: $newname"
 }
 
-# Fungsi utama
+function tambah-admin {
+    config_file="/root/bot/config.json"
+    if [ ! -f "$config_file" ]; then
+        echo "File config tidak ditemukan di $config_file"
+        return
+    fi
+    read -p "Masukkan Telegram ID admin baru: " adminid
+    # Asumsi format JSON punya field "admins": ["id1","id2"]
+    sed -i "s/\(\"admins\": \[.*\)\]/\1, \"$adminid\"]/" "$config_file"
+    echo "Admin baru berhasil ditambahkan: $adminid"
+}
+
+# ===== MENU =====
+function display_menu {
+    LIGHTGREEN="\033[1;32m"
+    NC="\033[0m"  # Reset color
+
+    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+    echo -e "\e[44;97;1m               BOT TELEGRAM               $NC"
+    echo -e "\033[1;32m anda bisa mengunakan bot simpel untuk\033[0m"
+    echo -e "\033[1;32m membuat akun lewat telegram silahkan\033[0m"
+    echo -e "\033[1;32m anda buat bot di telegram cari bot\033[0m"
+    echo -e "\033[1;32m @BotFather silahkan buat bot anda ambil\033[0m"
+    echo -e "\033[1;32m token&id anda untuk cek id\033[0m"
+    echo -e "\033[1;32m @CekIDTelegram_bot\033[0m"
+    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+    echo -e "  ${LIGHTGREEN}[1].${NC}\033[1;97m Install Bot Reseller${NC}"
+    echo -e "  ${LIGHTGREEN}[2].${NC}\033[1;97m Restart Bot Reseller${NC}"
+    echo -e "  ${LIGHTGREEN}[3].${NC}\033[1;97m Stop Bot Reseller${NC}"
+    echo -e "  ${LIGHTGREEN}[4].${NC}\033[1;97m Ganti Nama Panggilan Bot (Multi Server)${NC}"
+    echo -e "  ${LIGHTGREEN}[5].${NC}\033[1;97m Tambah Admin${NC}"
+    echo -e "  ${LIGHTGREEN}[6].${NC}\033[1;97m Install Bot Private${NC}"
+    echo -e "  ${LIGHTGREEN}[7].${NC}\033[1;97m Hapus Bot Private${NC}"
+    echo -e "  ${LIGHTGREEN}[8].${NC}\033[1;97m Stop Bot Private${NC}"
+    echo -e "  ${LIGHTGREEN}[9].${NC}\033[1;97m Restart Bot Private${NC}"
+    echo -e "  ${LIGHTGREEN}[x].${NC}\033[1;97m Exit ${NC}"
+    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
+}
+
+# ===== MAIN LOOP =====
 function main {
     while true; do
         display_menu
-        read -p "Select From Options [ 1 - 10 or x ] : " menu
+        read -p "Select From Options [ 1 - 9 or x ] : " menu
         echo -e ""
 
         case $menu in
@@ -98,29 +123,32 @@ function main {
                 stop-bot2
                 ;;
             4)
-                echo "Uninstalling BOT CYBERVPN..."
-                del-bot2
+                echo "Mengganti Nama Panggilan Bot..."
+                ganti-nama-bot
                 ;;
             5)
-                echo "Installing Bot KYT..."
-                add-bot
+                echo "Menambah Admin Baru..."
+                tambah-admin
                 ;;
             6)
-                echo "Hapus Bot KYT..."
-                hapus-bot
+                echo "Installing Bot Private..."
+                add-bot
                 ;;
             7)
-                echo "Stopping Bot KYT..."
-                stop-bot
+                echo "Menghapus Bot Private..."
+                hapus-bot
                 ;;
             8)
-                echo "Restarting Bot KYT..."
+                echo "Stopping Bot Private..."
+                stop-bot
+                ;;
+            9)
+                echo "Restarting Bot Private..."
                 restart-bot
                 ;;
-            
             x)
                 echo "Exiting..."
-                menu
+                exit 0
                 ;;
             *)
                 echo "Pilihan tidak valid."
