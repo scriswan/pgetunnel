@@ -1,162 +1,340 @@
 #!/bin/bash
-dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
-biji=$(date +"%Y-%m-%d" -d "$dateFromServer")
-###########- COLOR CODE -##############
-NC="\e[0m"
-RED="\033[0;31m"
-
-PERMISSION () {
-    MYIP=$(curl -sS ipv4.icanhazip.com)
-    IZIN=$(curl -sS https://raw.githubusercontent.com/scriswan/pgetunnel/main/register | awk '{print $4}' | grep $MYIP)
-    if [ "$MYIP" = "$IZIN" ]; then
-        echo "Permission Accepted"
-        res="Permission Accepted"
+ipsaya=$(curl -sS ipinfo.io/ip)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+data_ip="https://raw.githubusercontent.com/scriswan/pgetunnel/main/Register"
+checking_sc() {
+    useexp=$(curl -sS $data_ip | grep $ipsaya | awk '{print $3}')
+    if [[ $date_list < $useexp ]]; then
+        echo -ne
     else
-        res="Permission Denied!"
+        echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+        echo -e "$COLOR1 ${NC} ${COLBG1}          ${WH}• AUTOSCRIPT PREMIUM •               ${NC} $COLOR1 $NC"
+        echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+        echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+        echo -e "            ${RED}PERMISSION DENIED !${NC}"
+        echo -e "   \033[0;33mYour VPS${NC} $ipsaya \033[0;33mHas been Banned${NC}"
+        echo -e "     \033[0;33mBuy access permissions for scripts${NC}"
+        echo -e "             \033[0;33mContact Your Admin ${NC}"
+        echo -e "     \033[0;36mTelegram${NC}: https://t.me/AimanVpnExpress"
+        echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+        exit
     fi
 }
+checking_sc
 
-PERMISSION
-
-if [ -f /home/needupdate ]; then
-    echo -e "${RED}Your script needs to be updated first!${NC}"
-    exit 0
-elif [ "$res" = "Permission Accepted" ]; then
-    echo "Access granted."
-else
-    echo -e "${RED}Permission Denied!${NC}"
-    exit 0
-fi
-
-# Color Definitions
-BIBlack='\033[1;90m'
-BIRed='\033[1;91m'
-BIGreen='\033[1;92m'
-BIYellow='\033[1;93m'
-BIBlue='\033[1;94m'
-BIPurple='\033[1;95m'
-BICyan='\033[1;96m'
-BIWhite='\033[1;97m'
-UWhite='\033[4;37m'
-On_IPurple='\033[0;105m'
-On_IRed='\033[0;101m'
-ORANGE='\033[0;33m'
-
-# Exporting Language to UTF-8
-export LANG='en_US.UTF-8'
-export LANGUAGE='en_US.UTF-8'
-
-MYIP=$(wget -qO- ipinfo.io/ip)
-echo "Checking VPS"
+domain=$(cat /etc/xray/domain)
+#color
+grenbo="\e[92;1m"
+NC='\e[0m'
+WH='\033[1;37m'
+#install
+function install-bot(){
+apt update -y && apt upgrade -y
+apt install python3 python3-pip git speedtest-cli -y
+apt install python3-pip
+sudo apt-get install -y p7zip-full
+cd /usr/bin
+clear
+wget https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/bot.zip
+unzip bot.zip
+mv bot/* /usr/bin
+chmod +x /usr/bin/*
+rm -rf bot.zip
+clear
+wget https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/kyt.zip
+unzip kyt.zip
+pip3 install -r kyt/requirements.txt
+clear
+cd /usr/bin/kyt/bot
+chmod +x *
+mv -f * /usr/bin
+rm -rf /usr/bin/kyt/bot
+rm -rf /usr/bin/*.zip
+rm -rf /usr/bin/modules
+cd
+rm -rf /etc/tele
 
 clear
+echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+echo -e "$COLOR1 ${NC} ${COLBG1}                ${WH}• BOT PANEL •                  ${NC} $COLOR1 $NC"
+echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+echo -e "${grenbo}Tutorial Creat Bot and ID Telegram${NC}"
+echo -e "${grenbo}[*] Creat Bot and Token Bot : @BotFather${NC}"
+echo -e "${grenbo}[*] Info Id Telegram : @MissRose_bot , perintah /info${NC}"
+echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+rm -rf /usr/bin/ddsdswl.session
+rm -rf /usr/bin/kyt/var.txt
+rm -rf /usr/bin/kyt/database.db
+echo -e ""
+read -e -p "[*] Input your Bot Token : " bottoken
+read -e -p "[*] Input Your Id Telegram :" admin
 
-# ===== FUNGSI TAMBAHAN =====
-function ganti-nama-bot {
-    config_file="/root/bot/config.json"
-    if [ ! -f "$config_file" ]; then
-        echo "File config tidak ditemukan di $config_file"
-        return
-    fi
-    read -p "Masukkan nama panggilan bot baru: " newname
-    sed -i "s/\"bot_name\": \".*\"/\"bot_name\": \"$newname\"/" "$config_file"
-    echo "Nama panggilan bot berhasil diganti menjadi: $newname"
+cat >/usr/bin/kyt/var.txt <<EOF
+BOT_TOKEN="$bottoken"
+ADMIN="$admin"
+DOMAIN="$domain"
+EOF
+
+echo 'TEXT=$'"(cat /etc/notiftele)"'' > /etc/tele
+echo "TIMES=10" >> /etc/tele
+echo 'KEY=$'"(cat /etc/per/token)"'' >> /etc/tele
+
+echo "$bottoken" > /etc/per/token
+echo "$admin" > /etc/per/id
+echo "$bottoken" > /usr/bin/token
+echo "$admin" > /usr/bin/idchat
+echo "$bottoken" > /etc/perlogin/token
+echo "$admin" > /etc/perlogin/id
+clear
+
+echo "SHELL=/bin/sh" >/etc/cron.d/cekbot
+echo "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin" >>/etc/cron.d/cekbot
+echo "*/1 * * * * root /usr/bin/cekbot" >>/etc/cron.d/cekbot
+
+cat > /usr/bin/cekbot << END
+nginx=$( systemctl status kyt | grep Active | awk '{print $3}' | sed 's/(//g' | sed 's/)//g' )
+if [[ $nginx == "running" ]]; then
+    echo -ne
+else
+    systemctl restart kyt
+    systemctl start kyt
+fi
+
+kyt=$( systemctl status kyt | grep "TERM" | wc -l )
+if [[ $kyt == "0" ]]; then
+echo -ne
+else
+    systemctl restart kyt
+    systemctl start kyt
+fi
+END
+
+cat > /etc/systemd/system/kyt.service << END
+[Unit]
+Description=Simple kyt - @kyt
+After=syslog.target network-online.target
+
+[Service]
+WorkingDirectory=/usr/bin
+ExecStart=/usr/bin/python3 -m kyt
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+END
+
+systemctl daemon-reload &> /dev/null
+systemctl enable kyt &> /dev/null
+systemctl start kyt &> /dev/null
+systemctl restart kyt &> /dev/null
+
+wget -q -O /usr/bin/addtrgo "https://raw.githubusercontent.com/scriswan/pgetunnel/main/trgo/addtrgo.sh" && chmod +x /usr/bin/addtrgo
+
+wget -q -O /usr/bin/deltrgo "https://raw.githubusercontent.com/scriswan/pgetunnel/main/trgo/deltrgo.sh" && chmod +x /usr/bin/deltrgo
+
+wget -q -O /usr/bin/cektrgo "https://raw.githubusercontent.com/scriswan/pgetunnel/main/trgo/cektrgo.sh" && chmod +x /usr/bin/cektrgo
+
+wget -q -O /usr/bin/renewtrgo "https://raw.githubusercontent.com/scriswan/pgetunnel/main/trgo/renewtrgo.sh" && chmod +x /usr/bin/renewtrgo
+
+echo "Done"
+echo " Installations complete, type /menu on your bot"
+read -n 1 -s -r -p "Press any key to back on menu"
+menu
 }
+cd
+if [ -e /usr/bin/kyt ]; then
+echo -ne
+else
+install-bot
+fi
 
-function tambah-admin {
-    config_file="/root/bot/config.json"
-    if [ ! -f "$config_file" ]; then
-        echo "File config tidak ditemukan di $config_file"
-        return
-    fi
-    read -p "Masukkan Telegram ID admin baru: " adminid
-    # Asumsi format JSON punya field "admins": ["id1","id2"]
-    sed -i "s/\(\"admins\": \[.*\)\]/\1, \"$adminid\"]/" "$config_file"
-    echo "Admin baru berhasil ditambahkan: $adminid"
-}
+#isi data
+echo -e "$COLOR1╭══════════════════════════════════════════╮${NC}"
+echo -e "$COLOR1│ \033[1;37mPlease select a your Choice              $COLOR1│${NC}"
+echo -e "$COLOR1╰══════════════════════════════════════════╯${NC}"
+echo -e "$COLOR1╭══════════════════════════════════════════╮${NC}"
+echo -e "$COLOR1│  [ 1 ]  \033[1;37mGANTI BOT       ${NC}"
+echo -e "$COLOR1│  [ 2 ]  \033[1;37mUPDATE BOT     ${NC}"
+echo -e "$COLOR1│  [ 3 ]  \033[1;37mDELETE BOT     ${NC}"
+echo -e "$COLOR1│  [ 4 ]  \033[1;37mGANTI NAMA PANGGILAN BOT (MULTI SERVER)     ${NC}"
+echo -e "$COLOR1│  [ 5 ]  \033[1;37mTAMBAH ADMIN     ${NC}"
+echo -e "$COLOR1╰══════════════════════════════════════════╯${NC}"
+until [[ $domain2 =~ ^[1-5]+$ ]]; do 
+read -p "   Please select numbers 1 sampai 5 : " domain2
+done
 
-# ===== MENU =====
-function display_menu {
-    LIGHTGREEN="\033[1;32m"
-    NC="\033[0m"  # Reset color
+if [[ $domain2 == "1" ]]; then
+clear
+echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+echo -e "$COLOR1 ${NC} ${COLBG1}                ${WH}• BOT PANEL •                  ${NC} $COLOR1 $NC"
+echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+echo -e "${grenbo}Tutorial Creat Bot and ID Telegram${NC}"
+echo -e "${grenbo}[*] Creat Bot and Token Bot : @BotFather${NC}"
+echo -e "${grenbo}[*] Info Id Telegram : @MissRose_bot , perintah /info${NC}"
+echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+rm -rf /usr/bin/ddsdswl.session
+rm -rf /usr/bin/kyt/var.txt
+rm -rf /usr/bin/kyt/database.db
+echo -e ""
+read -e -p "[*] Input your Bot Token : " bottoken
+read -e -p "[*] Input Your Id Telegram :" admin
 
-    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-    echo -e "\e[44;97;1m               BOT TELEGRAM               $NC"
-    echo -e "\033[1;32m anda bisa mengunakan bot simpel untuk\033[0m"
-    echo -e "\033[1;32m membuat akun lewat telegram silahkan\033[0m"
-    echo -e "\033[1;32m anda buat bot di telegram cari bot\033[0m"
-    echo -e "\033[1;32m @BotFather silahkan buat bot anda ambil\033[0m"
-    echo -e "\033[1;32m token&id anda untuk cek id\033[0m"
-    echo -e "\033[1;32m @CekIDTelegram_bot\033[0m"
-    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-    echo -e "  ${LIGHTGREEN}[1].${NC}\033[1;97m Install Bot Reseller${NC}"
-    echo -e "  ${LIGHTGREEN}[2].${NC}\033[1;97m Restart Bot Reseller${NC}"
-    echo -e "  ${LIGHTGREEN}[3].${NC}\033[1;97m Stop Bot Reseller${NC}"
-    echo -e "  ${LIGHTGREEN}[4].${NC}\033[1;97m Ganti Nama Panggilan Bot (Multi Server)${NC}"
-    echo -e "  ${LIGHTGREEN}[5].${NC}\033[1;97m Tambah Admin${NC}"
-    echo -e "  ${LIGHTGREEN}[6].${NC}\033[1;97m Install Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[7].${NC}\033[1;97m Hapus Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[8].${NC}\033[1;97m Stop Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[9].${NC}\033[1;97m Restart Bot Private${NC}"
-    echo -e "  ${LIGHTGREEN}[x].${NC}\033[1;97m Exit ${NC}"
-    echo -e "\033[1;32m──────────────────────────────────────────\033[0m"
-}
+cat >/usr/bin/kyt/var.txt <<EOF
+BOT_TOKEN="$bottoken"
+ADMIN="$admin"
+DOMAIN="$domain"
+EOF
 
-# ===== MAIN LOOP =====
-function main {
-    while true; do
-        display_menu
-        read -p "Select From Options [ 1 - 9 or x ] : " menu
-        echo -e ""
+echo "$bottoken" > /etc/per/token
+echo "$admin" > /etc/per/id
+clear
 
-        case $menu in
-            1)
-                echo "Installing BOT CYBERVPN..."
-                bot2
-                ;;
-            2)
-                echo "Restarting BOT CYBERVPN..."
-                restart-bot2
-                ;;
-            3)
-                echo "Stopping BOT CYBERVPN..."
-                stop-bot2
-                ;;
-            4)
-                echo "Mengganti Nama Panggilan Bot..."
-                ganti-nama-bot
-                ;;
-            5)
-                echo "Menambah Admin Baru..."
-                tambah-admin
-                ;;
-            6)
-                echo "Installing Bot Private..."
-                add-bot
-                ;;
-            7)
-                echo "Menghapus Bot Private..."
-                hapus-bot
-                ;;
-            8)
-                echo "Stopping Bot Private..."
-                stop-bot
-                ;;
-            9)
-                echo "Restarting Bot Private..."
-                restart-bot
-                ;;
-            x)
-                echo "Exiting..."
-                exit 0
-                ;;
-            *)
-                echo "Pilihan tidak valid."
-                ;;
-        esac
-        echo -e "\n"
-    done
-}
+cat > /etc/systemd/system/kyt.service << END
+[Unit]
+Description=Simple kyt - @kyt
+After=syslog.target network-online.target
 
-# Jalankan fungsi utama
-main
+[Service]
+WorkingDirectory=/usr/bin
+ExecStart=/usr/bin/python3 -m kyt
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+END
+
+systemctl daemon-reload &> /dev/null
+systemctl stop kyt &> /dev/null
+systemctl enable kyt &> /dev/null
+systemctl start kyt &> /dev/null
+systemctl restart kyt &> /dev/null
+
+echo "Done"
+echo " Installations complete, type /menu on your bot"
+read -n 1 -s -r -p "Press any key to back on menu"
+menu
+fi
+if [[ $domain2 == "2" ]]; then
+clear
+cp -r /usr/bin/kyt/var.txt /usr/bin &> /dev/null
+rm -rf /usr/bin/kyt.zip
+rm -rf /usr/bin/kyt
+sleep 2
+cd /usr/bin
+wget https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/bot.zip
+unzip bot.zip
+mv bot/* /usr/bin
+chmod +x /usr/bin/*
+rm -rf bot.zip
+clear
+wget https://raw.githubusercontent.com/scriswan/pgetunnel/main/bot/kyt.zip
+unzip kyt.zip
+cd kyt
+pip3 install -r kyt/requirements.txt
+clear
+cd /usr/bin/kyt/bot
+chmod +x *
+mv -f * /usr/bin
+rm -rf /usr/bin/kyt/bot
+rm -rf /usr/bin/*.zip
+mv /usr/bin/var.txt /usr/bin/kyt
+cd
+clear
+
+systemctl daemon-reload &> /dev/null
+systemctl stop kyt &> /dev/null
+systemctl enable kyt &> /dev/null
+systemctl start kyt &> /dev/null
+systemctl restart kyt &> /dev/null
+clear
+echo -e "Succes Update BOT Telegram"
+read -n 1 -s -r -p "Press any key to back on menu"
+menu
+fi
+
+if [[ $domain2 == "3" ]]; then
+clear
+rm -rf /usr/bin/kyt
+echo -e "Succes Delete BOT Telegram"
+read -n 1 -s -r -p "Press any key to back on menu"
+menu
+fi
+
+if [[ $domain2 == "4" ]]; then
+clear
+echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+echo -e "$COLOR1 ${NC} ${COLBG1}                ${WH}• BOT PANEL •                  ${NC} $COLOR1 $NC"
+echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+echo -e "${grenbo}Ini digunakan jika Mau memakai 1bot saja tanpa perlu ${NC}"
+echo -e "${grenbo}memakai banyak bot create ini digunakan untuk create akun ${NC}"
+echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+echo -e ""
+read -e -p "[*] Input Nama Panggilan Botnya : " namabot
+
+sed -i "s/77/${namabot}/g" /usr/bin/kyt/modules/menu.py
+sed -i "s/77/${namabot}/g" /usr/bin/kyt/modules/start.py
+sed -i "s/"sshovpn"/"sshovpn${namabot}"/g" /usr/bin/kyt/modules/menu.py
+sed -i "s/"vmess"/"vmess${namabot}"/g" /usr/bin/kyt/modules/menu.py
+sed -i "s/"vless"/"vless${namabot}"/g" /usr/bin/kyt/modules/menu.py
+sed -i "s/"trojan"/"trojan${namabot}"/g" /usr/bin/kyt/modules/menu.py
+sed -i "s&.menu|/menu&.${namabot}|/${namabot}&g" /usr/bin/kyt/modules/menu.py
+sed -i "s&.start|/start&.start${namabot}|/start${namabot}&g" /usr/bin/kyt/modules/start.py
+sed -i "s&.admin|/admin&.admin${namabot}|/admin${namabot}&g" /usr/bin/kyt/modules/admin.py
+sed -i "s/b'start'/b'start${namabot}'/g" /usr/bin/kyt/modules/start.py
+sed -i "s/b'admin'/b'admin${namabot}'/g" /usr/bin/kyt/modules/admin.py
+sed -i "s/b'menu'/b'${namabot}'/g" /usr/bin/kyt/modules/menu.py
+sed -i "s/b'menu'/b'${namabot}'/g" /usr/bin/kyt/modules/start.py
+sed -i "s/add-ip/add-ip${namabot}/g" /usr/bin/kyt/modules/admin.py
+sed -i "s/change-ip/change-ip${namabot}/g" /usr/bin/kyt/modules/admin.py
+sed -i "s/add-key/add-key${namabot}/g" /usr/bin/kyt/modules/admin.py
+sed -i "s/7-/${namabot}-/g" /usr/bin/kyt/modules/vmess.py
+sed -i "s/b'vmess'/b'vmess${namabot}'/g" /usr/bin/kyt/modules/vmess.py
+sed -i "s/7-/${namabot}-/g" /usr/bin/kyt/modules/vless.py
+sed -i "s/b'vless'/b'vless${namabot}'/g" /usr/bin/kyt/modules/vless.py
+sed -i "s/7-/${namabot}-/g" /usr/bin/kyt/modules/trojan.py
+sed -i "s/b'trojan'/b'trojan${namabot}'/g" /usr/bin/kyt/modules/trojan.py
+sed -i "s/7-/${namabot}-/g" /usr/bin/kyt/modules/ssh.py
+sed -i "s/b'sshovpn'/b'sshovpn${namabot}'/g" /usr/bin/kyt/modules/ssh.py
+sed -i "s/"menu"/"${namabot}"/g" /usr/bin/kyt/modules/vmess.py
+sed -i "s/"menu"/"${namabot}"/g" /usr/bin/kyt/modules/vless.py
+sed -i "s/"menu"/"${namabot}"/g" /usr/bin/kyt/modules/trojan.py
+sed -i "s/"menu"/"${namabot}"/g" /usr/bin/kyt/modules/ssh.py
+sed -i "s/"menu"/"${namabot}"/g" /usr/bin/kyt/modules/menu.py
+
+clear
+echo -e "Succes Ganti Nama Panggilan BOT Telegram"
+echo -e "Kalau Mau Panggil Menu botnya Ketik .${namabot} atau /${namabot}"
+echo -e "Kalau Mau Panggil Start botnya Ketik .start${namabot} atau /start${namabot}"
+systemctl restart kyt
+read -n 1 -s -r -p "Press any key to back on menu"
+menu
+fi
+
+
+if [[ $domain2 == "5" ]]; then
+clear
+echo -e "$COLOR1╭═════════════════════════════════════════════════╮${NC}"
+echo -e "$COLOR1 ${NC} ${COLBG1}                ${WH}• BOT PANEL •                  ${NC} $COLOR1 $NC"
+echo -e "$COLOR1╰═════════════════════════════════════════════════╯${NC}"
+echo -e ""
+read -e -p "[*] Input ID Usernya : " user
+userke=$(cat /usr/bin/kyt/var.txt | wc -l)
+sed -i '/(ADMIN,))/a hello	c.execute("INSERT INTO admin (user_id) VALUES (?)",(USER'""$userke""',))' /usr/bin/kyt/__init__.py
+cat >>/usr/bin/kyt/var.txt <<EOF
+USER${userke}="$user"
+EOF
+sed -i "s/hello//g" /usr/bin/kyt/__init__.py
+
+echo 'curl -s --max-time $TIMES -d "chat_id='""$user""'&disable_web_page_preview=1&text=$TEXT&parse_mode=html" https://api.telegram.org/bot$KEY/sendMessage >/dev/null' >> /etc/tele
+clear
+echo -e "Succes TAMBAH Admin BOT Telegram"
+rm -rf /usr/bin/ddsdswl.session
+rm -rf /usr/bin/kyt/database.db
+systemctl restart kyt 
+read -n 1 -s -r -p "Press any key to back on menu"
+menu
+fi
